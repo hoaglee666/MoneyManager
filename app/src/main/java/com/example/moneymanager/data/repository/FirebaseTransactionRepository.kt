@@ -1,14 +1,18 @@
 package com.example.moneymanager.data.repository
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.example.moneymanager.data.model.Transaction
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.toObjects
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import java.time.YearMonth
 import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
@@ -57,47 +61,60 @@ class FirebaseTransactionRepository @Inject constructor(
                     close(error)
                     return@addSnapshotListener
                 }
-
                 if (snapshot != null) {
                     val transactions = snapshot.toObjects(Transaction::class.java)
                     trySend(transactions)
                 }
             }
-
         awaitClose { listenerRegistration.remove() }
     }
 
     override fun getTransactionsByMonth(month: Int, year: Int): Flow<List<Transaction>> = callbackFlow {
         val userId = getCurrentUserId()
-        
-        val calendar = Calendar.getInstance()
-        calendar.set(year, month, 1, 0, 0, 0)
-        calendar.set(Calendar.MILLISECOND, 0)
-        val startDate = Timestamp(calendar.time)
-        
-        calendar.set(year, month, calendar.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59)
-        calendar.set(Calendar.MILLISECOND, 999)
-        val endDate = Timestamp(calendar.time)
-        
         val listenerRegistration = transactionsCollection
             .whereEqualTo("userId", userId)
-            .whereGreaterThanOrEqualTo("date", startDate)
-            .whereLessThanOrEqualTo("date", endDate)
+            .whereEqualTo("month", month)
+            .whereEqualTo("year", year)
             .orderBy("date", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     close(error)
                     return@addSnapshotListener
                 }
-
                 if (snapshot != null) {
                     val transactions = snapshot.toObjects(Transaction::class.java)
                     trySend(transactions)
                 }
             }
-
         awaitClose { listenerRegistration.remove() }
     }
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun getTransactionsByTypeAndMonth(type: String, yearMonth: YearMonth): Flow<List<Transaction>> = callbackFlow {
+        val userId = getCurrentUserId()
+        val month = yearMonth.monthValue
+        val year = yearMonth.year
+
+        val listenerRegistration = transactionsCollection
+            .whereEqualTo("userId", userId)
+            .whereEqualTo("type", type)
+            .whereEqualTo("month", month)
+            .whereEqualTo("year", year)
+            .orderBy("date", Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+                if (snapshot != null ) {
+                    val transactions = snapshot.toObjects(Transaction::class.java)
+                    trySend(transactions)
+                }
+            }
+        awaitClose { listenerRegistration.remove() }
+    }
+
 
     override fun getRecentTransactions(limit: Int): Flow<List<Transaction>> = callbackFlow {
         val userId = getCurrentUserId()

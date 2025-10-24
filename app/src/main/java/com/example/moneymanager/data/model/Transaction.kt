@@ -11,5 +11,7 @@ data class Transaction(
     val type: String = "", // "income" or "expense"
     val category: String = "",
     val description: String = "",
-    val date: Timestamp = Timestamp.now()
+    val date: Timestamp = Timestamp.now(),
+    val month: Int = 0, //1 = jan, 12 = dec
+    val year: Int = 0
 )

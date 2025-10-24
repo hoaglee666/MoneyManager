@@ -3,8 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
-    alias(libs.plugins.google.services)
     kotlin("kapt")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -12,7 +12,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.moneymanager"
+        applicationId = "pose.moneymanager"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -54,7 +54,10 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.compose.material3)
     debugImplementation(libs.androidx.ui.tooling)
+
+
     
     // Navigation
     implementation(libs.navigation.compose)
@@ -63,7 +66,8 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
-    
+
+
     // Google Play Services
     implementation(libs.google.play.services.auth)
     implementation(libs.google.play.services.base)
@@ -84,7 +88,9 @@ dependencies {
     // Charts for visualization
     implementation(libs.vico.compose)
     implementation(libs.vico.compose.m3)
-    
+
+    //Icons
+    implementation("androidx.compose.material:material-icons-extended")
     // Image Loading
     implementation(libs.coil.compose)
     testImplementation(libs.junit)

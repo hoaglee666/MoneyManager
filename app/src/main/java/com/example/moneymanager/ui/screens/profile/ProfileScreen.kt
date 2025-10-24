@@ -37,7 +37,8 @@ import java.util.*
 @Composable
 fun ProfileScreen(
     onNavigateToLogin: () -> Unit,
-    authViewModel: AuthViewModel = hiltViewModel()
+    onNavigateToTransactions: () -> Unit,
+    authViewModel: AuthViewModel = hiltViewModel(),
 ) {
     val authState by authViewModel.authState.collectAsStateWithLifecycle()
     val currentUser by authViewModel.currentUser.collectAsStateWithLifecycle(initialValue = null)
@@ -89,7 +90,8 @@ fun ProfileScreen(
             onEditNameClick = { showEditNameDialog = true },
             onChangePasswordClick = { showChangePasswordDialog = true },
             onDeleteAccountClick = { showDeleteAccountDialog = true },
-            onSignOutClick = { authViewModel.signOut() }
+            onSignOutClick = { authViewModel.signOut() },
+            onNavigateToTransactions = onNavigateToTransactions
         )
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -231,6 +233,7 @@ private fun ProfileHeader(
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
         )
 
+
         // Member since
         user?.createdAt?.let { createdAt ->
             val date = SimpleDateFormat("MMM yyyy", Locale.getDefault()).format(Date(createdAt))
@@ -249,7 +252,8 @@ private fun ProfileContent(
     onEditNameClick: () -> Unit,
     onChangePasswordClick: () -> Unit,
     onDeleteAccountClick: () -> Unit,
-    onSignOutClick: () -> Unit
+    onSignOutClick: () -> Unit,
+    onNavigateToTransactions: () -> Unit
 ) {
     Column(
         modifier = Modifier.padding(horizontal = 16.dp)
@@ -287,7 +291,7 @@ private fun ProfileContent(
             icon = Icons.Default.Notifications,
             title = "Notifications",
             subtitle = "Manage notification preferences",
-            onClick = { /* TODO: Implement notifications settings */ }
+            onClick = { /*todo*/ }
         )
 
         ProfileOption(

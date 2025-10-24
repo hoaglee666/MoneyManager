@@ -76,9 +76,19 @@ fun CategoriesScreen(
     // Delete confirmation dialog state
     var showDeleteConfirmDialog by remember { mutableStateOf(false) }
     var categoryToDelete by remember { mutableStateOf<Category?>(null) }
-    
+    val context = androidx.compose.ui.platform.LocalContext.current
+
+
     // Load categories on initial composition
     LaunchedEffect(Unit) {
+        val sharedPrefs = context.getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+        val isFirstLaunch = sharedPrefs.getBoolean("is_first_launch", true)
+
+        if (isFirstLaunch) {
+            categoryViewModel.createDefaultCategories()
+            sharedPrefs.edit().putBoolean("is_first_launch", false).apply()
+        }
+
         categoryViewModel.loadAllCategories()
     }
     

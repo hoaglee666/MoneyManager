@@ -7,5 +7,7 @@ data class Category(
     val id: String = "",
     val userId: String = "",
     val name: String = "",
-    val type: String = "" // "income" or "expense"
+    val type: String = "", // "income" or "expense"
+    val parentId: String? = null // null = top-level category
 )
+

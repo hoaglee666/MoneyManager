@@ -75,3 +75,4 @@ object FirebaseModule {
         return FirebaseCategoryRepository(firestore, auth)
     }
 }
+

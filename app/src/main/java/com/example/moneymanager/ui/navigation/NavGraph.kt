@@ -3,9 +3,9 @@ package com.example.moneymanager.ui.navigation
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -14,13 +14,13 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -30,6 +30,7 @@ import com.example.moneymanager.ui.screens.auth.RegisterScreen
 import com.example.moneymanager.ui.screens.category.CategoriesScreen
 import com.example.moneymanager.ui.screens.dashboard.DashboardScreen
 import com.example.moneymanager.ui.screens.profile.ProfileScreen
+import com.example.moneymanager.ui.screens.statistics.StatisticsScreen
 import com.example.moneymanager.ui.screens.transaction.AddEditTransactionScreen
 import com.example.moneymanager.ui.screens.transaction.TransactionsScreen
 import com.example.moneymanager.ui.viewmodel.AuthViewModel
@@ -41,7 +42,7 @@ fun MainContainer(
     authViewModel: AuthViewModel = hiltViewModel()
 ) {
     val isAuthenticated by authViewModel.isAuthenticated.collectAsState(initial = false)
-    var selectedTabIndex by remember { mutableStateOf(0) }
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
     
     // Only show navigation bar for authenticated users
     if (isAuthenticated) {
@@ -76,7 +77,7 @@ fun MainContainer(
                     NavigationBarItem(
                         icon = {
                             Icon(
-                                Icons.Default.List,
+                                Icons.AutoMirrored.Filled.List,
                                 contentDescription = "Transactions",
                                 tint = if (selectedTabIndex == 1) Color(0xFF6366F1) else Color.Gray
                             )
@@ -235,7 +236,8 @@ fun NavGraph(
                 onNavigateToProfile = { navController.navigate(Screen.Profile.route) },
                 onTransactionClick = { transactionId ->
                     navController.navigate(Screen.EditTransaction.createRoute(transactionId))
-                }
+                },
+                onNavigateToStatistics = { navController.navigate(Screen.Statistics.route)}
             )
         }
         
@@ -279,6 +281,12 @@ fun NavGraph(
                 onNavigateToTransactions = {
                     navController.navigate(Screen.Transactions.route)
                 }
+            )
+        }
+
+        composable(Screen.Statistics.route) {
+            StatisticsScreen(
+                onNavigateBack = {navController.popBackStack()}
             )
         }
     }

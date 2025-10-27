@@ -69,6 +69,7 @@ import java.util.Locale
 @Composable
 fun DashboardScreen(
     onNavigateToAddTransaction: () -> Unit,
+    onNavigateToStatistics: () -> Unit,
     onNavigateToTransactions: () -> Unit,
     onNavigateToCategories: () -> Unit,
     onNavigateToProfile: () -> Unit,
@@ -163,7 +164,8 @@ fun DashboardScreen(
                     QuickActions(
                         onNavigateToAddTransaction = onNavigateToAddTransaction,
                         onNavigateToTransactions = onNavigateToTransactions,
-                        onNavigateToCategories = onNavigateToCategories
+                        onNavigateToCategories = onNavigateToCategories,
+                        onNavigateToStatistics = onNavigateToStatistics
                     )
                 }
                 
@@ -312,7 +314,8 @@ fun BalanceCard(transactionsState: TransactionViewModel.TransactionsState) {
 fun QuickActions(
     onNavigateToAddTransaction: () -> Unit,
     onNavigateToTransactions: () -> Unit,
-    onNavigateToCategories: () -> Unit
+    onNavigateToCategories: () -> Unit,
+    onNavigateToStatistics: () -> Unit
 ) {
     data class QuickAction(val title: String, val icon: ImageVector, val color: Color, val onClick: () -> Unit)
     
@@ -320,7 +323,7 @@ fun QuickActions(
         QuickAction("Add Transaction", Icons.Default.Add, Color(0xFFEF4444), onNavigateToAddTransaction),
         QuickAction("View Bills", Icons.Default.List, Color(0xFF3B82F6), onNavigateToTransactions),
         QuickAction("Categories", Icons.Default.Star, Color(0xFF10B981), onNavigateToCategories),
-        QuickAction("Statistics", Icons.Default.Info, Color(0xFFF59E0B)) { }
+        QuickAction("Statistics", Icons.Default.Info, Color(0xFFF59E0B), onNavigateToStatistics)
     )
     LazyRow(modifier = Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         items(actions) { action ->

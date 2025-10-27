@@ -1,5 +1,6 @@
 package com.example.moneymanager.ui.navigation
 
+
 sealed class Screen(val route: String) {
     // Auth screens
     object Login : Screen("login_screen")
@@ -16,4 +17,5 @@ sealed class Screen(val route: String) {
     }
     object Categories : Screen("categories_screen")
     object Profile : Screen("profile_screen")
+    object Statistics : Screen("statistics")
 }

@@ -131,7 +131,7 @@ class FirebaseCategoryRepository @Inject constructor(
             val userId = getCurrentUserId()
             val subcategoriesSnapshot = categoriesCollection
                 .whereEqualTo("userId", userId)
-                .whereEqualTo("parentId", null)
+                .whereEqualTo("parentId", categoryId)
                 .get()
                 .await()
             subcategoriesSnapshot.documents.forEach { doc ->

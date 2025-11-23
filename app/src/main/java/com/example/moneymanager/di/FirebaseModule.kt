@@ -2,8 +2,10 @@ package com.example.moneymanager.di
 
 import android.content.Context
 import com.example.moneymanager.data.repository.AuthRepository
+import com.example.moneymanager.data.repository.BudgetRepository
 import com.example.moneymanager.data.repository.CategoryRepository
 import com.example.moneymanager.data.repository.FirebaseAuthRepository
+import com.example.moneymanager.data.repository.FirebaseBudgetRepository
 import com.example.moneymanager.data.repository.FirebaseCategoryRepository
 import com.example.moneymanager.data.repository.FirebaseTransactionRepository
 import com.example.moneymanager.data.repository.TransactionRepository
@@ -74,5 +76,13 @@ object FirebaseModule {
     ): CategoryRepository {
         return FirebaseCategoryRepository(firestore, auth)
     }
-}
 
+    @Provides
+    @Singleton
+    fun provideBudgetRepository(
+        firestore: FirebaseFirestore,
+        auth: FirebaseAuth
+    ): BudgetRepository {
+        return FirebaseBudgetRepository(firestore, auth)
+    }
+}

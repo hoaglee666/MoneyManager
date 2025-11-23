@@ -4,11 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.moneymanager.data.model.User
 import com.example.moneymanager.data.repository.AuthRepository
+import com.example.moneymanager.data.repository.SettingsRepository
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val googleSignInClient: GoogleSignInClient
+    private val googleSignInClient: GoogleSignInClient,
+    private val settingsRepository: SettingsRepository // Injected
 ) : ViewModel() {
 
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
@@ -24,6 +27,15 @@ class AuthViewModel @Inject constructor(
 
     val currentUser = authRepository.currentUser
     val isAuthenticated = authRepository.isUserAuthenticated
+
+    // Expose settings
+    val isNotificationsEnabled = settingsRepository.isNotificationsEnabled
+
+    fun toggleNotifications(enabled: Boolean) {
+        settingsRepository.setNotificationsEnabled(enabled)
+    }
+
+    // ... (Keep all existing login/register/profile methods unchanged) ...
 
     fun login(email: String, password: String) {
         viewModelScope.launch {
@@ -61,7 +73,6 @@ class AuthViewModel @Inject constructor(
     fun signOut() {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
-            // Sign out from Google as well
             googleSignInClient.signOut()
             val result = authRepository.signOut()
             _authState.value = result.fold(
@@ -99,7 +110,6 @@ class AuthViewModel @Inject constructor(
         _authState.value = AuthState.Idle
     }
 
-    // Profile management methods
     fun updateDisplayName(displayName: String) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading

@@ -33,10 +33,36 @@ class TransactionViewModel @Inject constructor(
     private val _selectedTransactionIds = MutableStateFlow<Set<String>>(emptySet())
     val selectedTransactionIds: StateFlow<Set<String>> = _selectedTransactionIds.asStateFlow()
 
+    // --- Search Logic ---
+    private var _cachedTransactions: List<Transaction> = emptyList() // Stores raw data from repo
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
+    fun onSearchQueryChanged(query: String) {
+        _searchQuery.value = query
+        applySearchFilter()
+    }
+
+    private fun applySearchFilter() {
+        val query = _searchQuery.value
+        if (query.isBlank()) {
+            _transactionsState.value = TransactionsState.Success(_cachedTransactions)
+        } else {
+            val filtered = _cachedTransactions.filter { transaction ->
+                transaction.category.contains(query, ignoreCase = true) ||
+                        transaction.description.contains(query, ignoreCase = true) ||
+                        transaction.amount.toString().contains(query)
+            }
+            _transactionsState.value = TransactionsState.Success(filtered)
+        }
+    }
+
+    // --- Selection Mode ---
+
     fun toggleSelectionMode() {
         _isSelectionMode.value = !_isSelectionMode.value
         if (!_isSelectionMode.value) {
-            _selectedTransactionIds.value = emptySet() //clear selection when exit
+            _selectedTransactionIds.value = emptySet()
         }
     }
 
@@ -68,21 +94,19 @@ class TransactionViewModel @Inject constructor(
                     onFailure = { failCount++ }
                 )
             }
-
-            //exist select and clear
             _isSelectionMode.value = false
             _selectedTransactionIds.value = emptySet()
-
             if (failCount > 0 ){
                 Log.e("TransactionViewModel", "Failed to delete $failCount transactions")
             }
         }
     }
 
-
     init {
         loadAllTransactions()
     }
+
+    // --- Data Loading (Updated to use cache) ---
 
     fun loadAllTransactions() {
         viewModelScope.launch {
@@ -92,11 +116,11 @@ class TransactionViewModel @Inject constructor(
                     _transactionsState.value = TransactionsState.Error(e.message ?: "Failed to load transactions")
                 }
                 .collectLatest { transactions ->
-                    _transactionsState.value = TransactionsState.Success(transactions)
+                    _cachedTransactions = transactions
+                    applySearchFilter()
                 }
         }
     }
-
 
     fun loadTransactionsByType(type: String) {
         viewModelScope.launch {
@@ -104,12 +128,11 @@ class TransactionViewModel @Inject constructor(
             transactionRepository.getTransactionsByType(type)
                 .catch { e ->
                     Log.e("TransactionViewModel", "Error loading by type: ${e.message}", e)
-                    _transactionsState.value = TransactionsState.Error(
-                        e.message ?: "Failed to load transactions by type"
-                    )
+                    _transactionsState.value = TransactionsState.Error(e.message ?: "Failed to load transactions by type")
                 }
                 .collectLatest { transactions ->
-                    _transactionsState.value = TransactionsState.Success(transactions)
+                    _cachedTransactions = transactions
+                    applySearchFilter()
                 }
         }
     }
@@ -121,12 +144,27 @@ class TransactionViewModel @Inject constructor(
             transactionRepository.getTransactionsByMonth(yearMonth.monthValue, yearMonth.year)
                 .catch { e ->
                     Log.e("TransactionViewModel", "Error loading by month: ${e.message}", e)
-                    _transactionsState.value = TransactionsState.Error(
-                        e.message ?: "Failed to load transactions by month"
-                    )
+                    _transactionsState.value = TransactionsState.Error(e.message ?: "Failed to load transactions by month")
                 }
                 .collectLatest { transactions ->
-                    _transactionsState.value = TransactionsState.Success(transactions)
+                    _cachedTransactions = transactions
+                    applySearchFilter()
+                }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun loadTransactionsByTypeAndMonth(type: String, yearMonth: YearMonth) {
+        viewModelScope.launch {
+            _transactionsState.value = TransactionsState.Loading
+            transactionRepository.getTransactionsByTypeAndMonth(type, yearMonth)
+                .catch { e ->
+                    Log.e("TransactionViewModel", "Error loading by type and month: ${e.message}", e)
+                    _transactionsState.value = TransactionsState.Error(e.message ?: "Failed to load filtered transactions")
+                }
+                .collectLatest { transactions ->
+                    _cachedTransactions = transactions
+                    applySearchFilter()
                 }
         }
     }
@@ -139,20 +177,19 @@ class TransactionViewModel @Inject constructor(
                     _transactionsState.value = TransactionsState.Error(e.message ?: "Failed to load transactions")
                 }
                 .collectLatest { transactions ->
-                    _transactionsState.value = TransactionsState.Success(transactions)
+                    _cachedTransactions = transactions
+                    applySearchFilter()
                 }
         }
     }
 
+    // --- CRUD Operations ---
+
     fun getTransactionById(id: String) {
         viewModelScope.launch {
             transactionRepository.getTransactionById(id).fold(
-                onSuccess = { transaction ->
-                    _currentTransaction.value = transaction
-                },
-                onFailure = { error ->
-                    // Handle error
-                }
+                onSuccess = { transaction -> _currentTransaction.value = transaction },
+                onFailure = { /* Handle error */ }
             )
         }
     }
@@ -162,13 +199,9 @@ class TransactionViewModel @Inject constructor(
             _transactionsState.value = TransactionsState.Loading
             transactionRepository.addTransaction(transaction)
                 .fold(
-                    onSuccess = { 
-                        loadAllTransactions()
-                    },
+                    onSuccess = { loadAllTransactions() },
                     onFailure = { error ->
-                        _transactionsState.value = TransactionsState.Error(
-                            error.message ?: "Failed to add transaction"
-                        )
+                        _transactionsState.value = TransactionsState.Error(error.message ?: "Failed to add transaction")
                     }
                 )
         }
@@ -191,23 +224,6 @@ class TransactionViewModel @Inject constructor(
                     onSuccess = { loadAllTransactions() },
                     onFailure = { /* Handle error */ }
                 )
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun loadTransactionsByTypeAndMonth(type: String, yearMonth: YearMonth) {
-        viewModelScope.launch {
-            _transactionsState.value = TransactionsState.Loading
-            transactionRepository.getTransactionsByTypeAndMonth(type, yearMonth)
-                .catch { e ->
-                    Log.e("TransactionViewModel", "Error loading by type and month: ${e.message}", e)
-                    _transactionsState.value = TransactionsState.Error(
-                        e.message ?: "Failed to load filtered transactions"
-                    )
-                }
-                .collectLatest { transactions ->
-                    _transactionsState.value = TransactionsState.Success(transactions)
-                }
         }
     }
 

@@ -2,69 +2,22 @@ package com.example.moneymanager.ui.screens.transaction
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.clickable // Added this import
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.CheckBox
-import androidx.compose.material.icons.filled.CheckBoxOutlineBlank
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -76,6 +29,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.moneymanager.data.model.Transaction
+import com.example.moneymanager.ui.theme.MediumGreen
+import com.example.moneymanager.ui.theme.TextGray
+import com.example.moneymanager.ui.theme.TextPrimary
 import com.example.moneymanager.ui.viewmodel.TransactionViewModel
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -93,142 +49,132 @@ fun TransactionsScreen(
     val transactionsState by transactionViewModel.transactionsState.collectAsState()
     val isSelectionMode by transactionViewModel.isSelectionMode.collectAsState()
     val selectedTransactionIds by transactionViewModel.selectedTransactionIds.collectAsState()
+    val searchQuery by transactionViewModel.searchQuery.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
     var showDeleteDialog by remember { mutableStateOf(false) }
-    
+    var isSearchActive by remember { mutableStateOf(false) }
+
     // Filter states
     var selectedTypeFilter by remember { mutableStateOf("all") } // all, income, expense
     var isMonthFilterExpanded by remember { mutableStateOf(false) }
     var selectedMonthFilter by remember { mutableStateOf("All Time") }
-    
+
     val months = listOf(
         "All Time",
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     )
-    
-    // Load transactions on initial composition
+
+    // Load initial data
     LaunchedEffect(Unit) {
         transactionViewModel.loadAllTransactions()
     }
-    
-    // Apply filters when they change
+
+    // Apply filters (Type/Month) - Search is handled by VM on top of this
     LaunchedEffect(selectedTypeFilter, selectedMonthFilter) {
         when {
-            // Both type and month selected
             selectedTypeFilter != "all" && selectedMonthFilter != "All Time" -> {
-                val monthIndex = months.indexOf(selectedMonthFilter) // e.g., "January" = 1
-                if (monthIndex > 0) { // Valid month found
+                val monthIndex = months.indexOf(selectedMonthFilter)
+                if (monthIndex > 0) {
                     val currentYear = java.time.Year.now().value
-                    val yearMonth = java.time.YearMonth.of(currentYear, monthIndex) // monthIndex is already correct (1-12)
+                    val yearMonth = java.time.YearMonth.of(currentYear, monthIndex)
                     transactionViewModel.loadTransactionsByTypeAndMonth(selectedTypeFilter, yearMonth)
                 }
             }
-            // Only type selected
-            selectedTypeFilter != "all" -> {
-                transactionViewModel.loadTransactionsByType(selectedTypeFilter)
-            }
-            // Only month selected
+            selectedTypeFilter != "all" -> transactionViewModel.loadTransactionsByType(selectedTypeFilter)
             selectedMonthFilter != "All Time" -> {
-                val monthIndex = months.indexOf(selectedMonthFilter) // e.g., "January" = 1
-                if (monthIndex > 0) { // Valid month found
+                val monthIndex = months.indexOf(selectedMonthFilter)
+                if (monthIndex > 0) {
                     val currentYear = java.time.Year.now().value
-                    val yearMonth = java.time.YearMonth.of(currentYear, monthIndex) // monthIndex is already correct (1-12)
+                    val yearMonth = java.time.YearMonth.of(currentYear, monthIndex)
                     transactionViewModel.loadTransactionsByMonth(yearMonth)
                 }
             }
-            // No filters (all time, all types)
-            else -> {
-                transactionViewModel.loadAllTransactions()
-            }
+            else -> transactionViewModel.loadAllTransactions()
         }
     }
-    
+
     Scaffold(
         topBar = {
-            if (isSelectionMode) {
-                TopAppBar(
-                    title = { Text("${selectedTransactionIds.size} selected")},
-                    navigationIcon = {
-                        IconButton(onClick = { transactionViewModel.toggleSelectionMode()}) {
-                            Icon(Icons.Default.Close, "Exit selection mode")
-                        }
-                    },
-                    actions = {
-                        if (transactionsState is TransactionViewModel.TransactionsState.Success) {
-                            val transactions = (transactionsState as TransactionViewModel.TransactionsState.Success).transactions
-                            val allSelected = selectedTransactionIds.size == transactions.size
-
-                            IconButton(
-                                onClick = {
-                                    if (allSelected) {
-                                        transactionViewModel.clearSelection()
-                                    } else {
-                                        transactionViewModel.selectAllTransaction(transactions)
-                                    }
-                                }
-                            ) {
-                                Icon(
-                                    if (selectedTransactionIds.size == transactions.size)
-                                    Icons.Default.CheckBox
-                                    else
-                                        Icons.Default.CheckBoxOutlineBlank,
-                                    "Select all"
-                                )
+            when {
+                isSelectionMode -> {
+                    SelectionTopAppBar(
+                        selectedCount = selectedTransactionIds.size,
+                        totalCount = (transactionsState as? TransactionViewModel.TransactionsState.Success)?.transactions?.size ?: 0,
+                        onClose = { transactionViewModel.toggleSelectionMode() },
+                        onSelectAll = {
+                            if (transactionsState is TransactionViewModel.TransactionsState.Success) {
+                                val transactions = (transactionsState as TransactionViewModel.TransactionsState.Success).transactions
+                                if (selectedTransactionIds.size == transactions.size) transactionViewModel.clearSelection()
+                                else transactionViewModel.selectAllTransaction(transactions)
                             }
                         }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
                     )
-                )
-            } else {
-                TopAppBar(
-                    title = { Text("Transactions") },
-                    navigationIcon = {
-                        IconButton(onClick = onNavigateBack) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                }
+                isSearchActive -> {
+                    SearchTopAppBar(
+                        query = searchQuery,
+                        onQueryChange = { transactionViewModel.onSearchQueryChanged(it) },
+                        onClose = {
+                            isSearchActive = false
+                            transactionViewModel.onSearchQueryChanged("") // Clear search when closing
                         }
-                    }
-                )
+                    )
+                }
+                else -> {
+                    TopAppBar(
+                        title = { Text("Transactions", fontWeight = FontWeight.Bold) },
+                        navigationIcon = {
+                            IconButton(onClick = onNavigateBack) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                            }
+                        },
+                        actions = {
+                            IconButton(onClick = { isSearchActive = true }) {
+                                Icon(Icons.Default.Search, contentDescription = "Search")
+                            }
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = Color.White
+                        )
+                    )
+                }
             }
         },
         floatingActionButton = {
             if (isSelectionMode) {
-                //delete fab in selection mode
                 FloatingActionButton(
                     onClick = { showDeleteDialog = true },
-                    containerColor = MaterialTheme.colorScheme.scrim,
-                    contentColor = MaterialTheme.colorScheme.error
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer
                 ) {
                     Icon(Icons.Default.Delete, contentDescription = "Delete Selected")
                 }
             } else {
-                //normal fabs
                 Column(
                     horizontalAlignment = Alignment.End,
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    //add
                     FloatingActionButton(
                         onClick = onNavigateToAddTransaction,
-                        containerColor = MaterialTheme.colorScheme.primary
+                        containerColor = MediumGreen,
+                        contentColor = Color.White
                     ) {
                         Icon(Icons.Default.Add, contentDescription = "Add Transaction")
                     }
-                    //delete
-                    FloatingActionButton(
-                        onClick = {transactionViewModel.toggleSelectionMode()},
-                        containerColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.errorContainer
+                    SmallFloatingActionButton(
+                        onClick = { transactionViewModel.toggleSelectionMode() },
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        contentColor = TextGray
                     ) {
-                        Icon(Icons.Default.Delete, contentDescription = "Delete Transactions")
+                        Icon(Icons.Default.Delete, contentDescription = "Select Transactions")
                     }
                 }
             }
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -236,88 +182,23 @@ fun TransactionsScreen(
                 .padding(paddingValues)
                 .padding(horizontal = 16.dp)
         ) {
-            // Filters
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.List,
-                    contentDescription = "Filter",
-                    tint = MaterialTheme.colorScheme.primary
+            // Filters (Hide filters if search is active to avoid clutter, optional)
+            if (!isSearchActive) {
+                TransactionFilters(
+                    selectedType = selectedTypeFilter,
+                    onTypeSelected = { selectedTypeFilter = it },
+                    selectedMonth = selectedMonthFilter,
+                    onMonthSelected = { selectedMonthFilter = it },
+                    months = months
                 )
-
-                // Type filter chips
-                FilterChip(
-                    selected = selectedTypeFilter == "all",
-                    onClick = { selectedTypeFilter = "all" },
-                    label = { Text("All") }
-                )
-
-                FilterChip(
-                    selected = selectedTypeFilter == "income",
-                    onClick = { selectedTypeFilter = "income" },
-                    label = { Text("Income") }
-                )
-
-                FilterChip(
-                    selected = selectedTypeFilter == "expense",
-                    onClick = { selectedTypeFilter = "expense" },
-                    label = { Text("Expense") }
-                )
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                // Month filter dropdown
-                ExposedDropdownMenuBox(
-                    expanded = isMonthFilterExpanded,
-                    onExpandedChange = { isMonthFilterExpanded = it }
-                ) {
-                    OutlinedTextField(
-                        value = selectedMonthFilter,
-                        onValueChange = {},
-                        readOnly = true,
-                        modifier = Modifier
-                            .menuAnchor()
-                            .widthIn(min = 220.dp)
-                            .padding(vertical = 4.dp),
-                        singleLine = true,
-                        textStyle = LocalTextStyle.current.copy(fontSize = 15.5.sp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedContainerColor = MaterialTheme.colorScheme.onSecondary,
-                            focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                            focusedBorderColor = MaterialTheme.colorScheme.primary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                            cursorColor = Color.Transparent
-                        )
-                    )
-                    ExposedDropdownMenu(
-                        expanded = isMonthFilterExpanded,
-                        onDismissRequest = { isMonthFilterExpanded = false }
-                    ) {
-                        months.forEach { month ->
-                            DropdownMenuItem(
-                                text = { Text(month, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                                onClick = {
-                                    selectedMonthFilter = month
-                                    isMonthFilterExpanded = false
-                                }
-                            )
-                        }
-                    }
-                }
+                Spacer(modifier = Modifier.height(8.dp))
             }
-
-            Spacer(modifier = Modifier.height(8.dp))
 
             // Transactions list
             when (transactionsState) {
                 is TransactionViewModel.TransactionsState.Loading -> {
                     Box(modifier = Modifier.fillMaxSize()) {
-                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center), color = MediumGreen)
                     }
                 }
                 is TransactionViewModel.TransactionsState.Error -> {
@@ -325,8 +206,7 @@ fun TransactionsScreen(
                         Text(
                             text = (transactionsState as TransactionViewModel.TransactionsState.Error).message,
                             color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.align(Alignment.Center),
-                            textAlign = TextAlign.Center
+                            modifier = Modifier.align(Alignment.Center)
                         )
                     }
                 }
@@ -335,20 +215,30 @@ fun TransactionsScreen(
 
                     if (transactions.isEmpty()) {
                         Box(modifier = Modifier.fillMaxSize()) {
-                            Text(
-                                text = "No transactions found",
+                            Column(
                                 modifier = Modifier.align(Alignment.Center),
-                                textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Icon(
+                                    imageVector = if(isSearchActive) Icons.Default.SearchOff else Icons.Default.ReceiptLong,
+                                    contentDescription = null,
+                                    tint = Color.LightGray,
+                                    modifier = Modifier.size(64.dp)
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = if(isSearchActive) "No results found" else "No transactions yet",
+                                    color = TextGray
+                                )
+                            }
                         }
                     } else {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(16.dp),
+                            contentPadding = PaddingValues(bottom = 80.dp, top = 8.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            items(transactions, key = {it.id}) { transaction ->
+                            items(transactions, key = { it.id }) { transaction ->
                                 TransactionListItem(
                                     transaction = transaction,
                                     isSelectionMode = isSelectionMode,
@@ -374,50 +264,165 @@ fun TransactionsScreen(
             }
         }
     }
+
     if (showDeleteDialog) {
         AlertDialog(
-            onDismissRequest = {showDeleteDialog = false},
-            icon = {
-                Icon(
-                    Icons.Default.Warning,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.error
-                )
-            },
-            title = {
-                Text("Delete Transactions")
-            },
-            text = {
-                Text(
-                    "Are you sure you want to delete ${selectedTransactionIds.size} " +
-                    "transaction${if (selectedTransactionIds.size > 1) "s" else ""}? " +
-                    "This action cannot be undone"
-                )
-            },
+            onDismissRequest = { showDeleteDialog = false },
+            icon = { Icon(Icons.Default.Warning, null, tint = MaterialTheme.colorScheme.error) },
+            title = { Text("Delete Transactions") },
+            text = { Text("Delete ${selectedTransactionIds.size} selected transaction(s)? This cannot be undone.") },
             confirmButton = {
                 Button(
                     onClick = {
                         transactionViewModel.deleteSelectedTransactions()
                         showDeleteDialog = false
                     },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error
-                    )
-                ) {
-                    Text("Delete")
-                }
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                ) { Text("Delete") }
             },
-            dismissButton = {
-                TextButton(onClick = {showDeleteDialog = false}) {
-                    Text("Cancel")
-                }
-            }
+            dismissButton = { TextButton(onClick = { showDeleteDialog = false }) { Text("Cancel") } }
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchTopAppBar(
+    query: String,
+    onQueryChange: (String) -> Unit,
+    onClose: () -> Unit
+) {
+    TopAppBar(
+        title = {
+            OutlinedTextField(
+                value = query,
+                onValueChange = onQueryChange,
+                placeholder = { Text("Search transactions...") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color.Transparent,
+                    unfocusedBorderColor = Color.Transparent,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent
+                ),
+                textStyle = LocalTextStyle.current.copy(fontSize = 18.sp)
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = onClose) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+            }
+        },
+        actions = {
+            if (query.isNotEmpty()) {
+                IconButton(onClick = { onQueryChange("") }) {
+                    Icon(Icons.Default.Close, "Clear")
+                }
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SelectionTopAppBar(
+    selectedCount: Int,
+    totalCount: Int,
+    onClose: () -> Unit,
+    onSelectAll: () -> Unit
+) {
+    TopAppBar(
+        title = { Text("$selectedCount selected") },
+        navigationIcon = {
+            IconButton(onClick = onClose) { Icon(Icons.Default.Close, "Close") }
+        },
+        actions = {
+            IconButton(onClick = onSelectAll) {
+                Icon(
+                    if (selectedCount == totalCount && totalCount > 0) Icons.Default.CheckBox else Icons.Default.CheckBoxOutlineBlank,
+                    "Select All"
+                )
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TransactionFilters(
+    selectedType: String,
+    onTypeSelected: (String) -> Unit,
+    selectedMonth: String,
+    onMonthSelected: (String) -> Unit,
+    months: List<String>
+) {
+    var isMonthExpanded by remember { mutableStateOf(false) }
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        FilterChip(
+            selected = selectedType == "all",
+            onClick = { onTypeSelected("all") },
+            label = { Text("All") }
+        )
+        FilterChip(
+            selected = selectedType == "income",
+            onClick = { onTypeSelected("income") },
+            label = { Text("Income") },
+            colors = FilterChipDefaults.filterChipColors(selectedContainerColor = Color(0xFFE8F5E9))
+        )
+        FilterChip(
+            selected = selectedType == "expense",
+            onClick = { onTypeSelected("expense") },
+            label = { Text("Expense") },
+            colors = FilterChipDefaults.filterChipColors(selectedContainerColor = Color(0xFFFFEBEE))
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        ExposedDropdownMenuBox(
+            expanded = isMonthExpanded,
+            onExpandedChange = { isMonthExpanded = it }
+        ) {
+            Row(
+                modifier = Modifier
+                    .menuAnchor()
+                    .clickable { isMonthExpanded = true }
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = selectedMonth,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = TextPrimary
+                )
+                Icon(Icons.Default.KeyboardArrowDown, null, tint = TextGray)
+            }
+            ExposedDropdownMenu(
+                expanded = isMonthExpanded,
+                onDismissRequest = { isMonthExpanded = false }
+            ) {
+                months.forEach { month ->
+                    DropdownMenuItem(
+                        text = { Text(month) },
+                        onClick = {
+                            onMonthSelected(month)
+                            isMonthExpanded = false
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalFoundationApi::class)
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TransactionListItem(
     transaction: Transaction,
@@ -433,74 +438,74 @@ fun TransactionListItem(
                 onClick = onTransactionClick,
                 onLongClick = onTransactionLongClick
             ),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer
-            else MaterialTheme.colorScheme.surface
+            containerColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f) else Color.White
         ),
-        border = if (isSelected) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null
+        border = if (isSelected) BorderStroke(2.dp, MediumGreen) else null,
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.5.dp)
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             if (isSelectionMode) {
                 Checkbox(
                     checked = isSelected,
-                    onCheckedChange = {onTransactionClick()}
+                    onCheckedChange = { onTransactionClick() },
+                    colors = CheckboxDefaults.colors(checkedColor = MediumGreen)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
             }
-            // Transaction type indicator
+
             Box(
                 modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
+                    .size(48.dp)
+                    .clip(RoundedCornerShape(12.dp))
                     .background(
-                        if (transaction.type == "income") Color(0xFF4CAF50).copy(alpha = 0.2f)
-                        else Color(0xFFF44336).copy(alpha = 0.2f)
+                        if (transaction.type == "income") Color(0xFFE8F5E9) else Color(0xFFFFEBEE)
                     ),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = if (transaction.type == "income") Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = transaction.type,
-                    tint = if (transaction.type == "income") Color(0xFF4CAF50) else Color(0xFFF44336)
+                    imageVector = if (transaction.type == "income") Icons.Default.ArrowDownward else Icons.Default.ArrowUpward,
+                    contentDescription = null,
+                    tint = if (transaction.type == "income") Color(0xFF4CAF50) else Color(0xFFF44336),
+                    modifier = Modifier.size(24.dp)
                 )
             }
-            
+
             Spacer(modifier = Modifier.width(16.dp))
-            
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = transaction.category,
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    color = TextPrimary
                 )
-                
+
                 if (transaction.description.isNotEmpty()) {
                     Text(
                         text = transaction.description,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-
-                transaction.date.let { date ->
-                    val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
-                    Text(
-                        text = dateFormat.format(date.toDate()),
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = TextGray,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                } else {
+                    Text(
+                        text = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(transaction.date.toDate()),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TextGray
                     )
                 }
             }
-            
-            val formatter = NumberFormat.getCurrencyInstance(Locale.getDefault())
+
             Text(
-                text = formatter.format(transaction.amount),
+                text = (if (transaction.type == "income") "+" else "-") +
+                        NumberFormat.getCurrencyInstance().format(transaction.amount),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = if (transaction.type == "income") Color(0xFF4CAF50) else Color(0xFFF44336)

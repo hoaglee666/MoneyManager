@@ -1,9 +1,9 @@
-package com.example.moneymanager.ui.viewmodel
+package pose.moneymanager.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.moneymanager.data.model.Category
-import com.example.moneymanager.data.repository.CategoryRepository
+import pose.moneymanager.data.model.Category
+import pose.moneymanager.data.repository.CategoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +17,6 @@ import javax.inject.Inject
 class CategoryViewModel @Inject constructor(
     private val categoryRepository: CategoryRepository,
 ) : ViewModel() {
-
     private val _categoriesState = MutableStateFlow<CategoriesState>(CategoriesState.Loading)
     val categoriesState: StateFlow<CategoriesState> = _categoriesState.asStateFlow()
     private val _groupedCategoriesState = MutableStateFlow<GroupedCategoriesState>(

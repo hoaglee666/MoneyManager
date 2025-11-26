@@ -1,4 +1,4 @@
-package com.example.moneymanager.ui.screens.auth
+package pose.moneymanager.ui.screens.auth
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

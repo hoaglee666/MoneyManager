@@ -1,4 +1,4 @@
-package com.example.moneymanager.ui.theme
+package pose.moneymanager.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

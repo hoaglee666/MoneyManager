@@ -1,4 +1,4 @@
-package com.example.moneymanager.data.model
+package pose.moneymanager.data.model
 
 import com.google.firebase.firestore.DocumentId
 

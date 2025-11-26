@@ -1,4 +1,4 @@
-package com.example.moneymanager.ui.screens.transaction
+package pose.moneymanager.ui.screens.transaction
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -10,11 +10,9 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -23,16 +21,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.moneymanager.data.model.Transaction
-import com.example.moneymanager.ui.theme.MediumGreen
-import com.example.moneymanager.ui.theme.TextGray
-import com.example.moneymanager.ui.theme.TextPrimary
-import com.example.moneymanager.ui.viewmodel.TransactionViewModel
+import pose.moneymanager.data.model.Transaction
+import pose.moneymanager.ui.theme.MediumGreen
+import pose.moneymanager.ui.theme.TextGray
+import pose.moneymanager.ui.theme.TextPrimary
+import pose.moneymanager.ui.viewmodel.TransactionViewModel
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Locale

@@ -1,4 +1,4 @@
-package com.example.moneymanager
+package pose.moneymanager
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

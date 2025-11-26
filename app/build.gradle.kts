@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.moneymanager"
+    namespace = "pose.moneymanager"
     compileSdk = 36
 
     defaultConfig {

@@ -1,14 +1,14 @@
-package com.example.moneymanager.di
+package pose.moneymanager.di
 
 import android.content.Context
-import com.example.moneymanager.data.repository.AuthRepository
-import com.example.moneymanager.data.repository.BudgetRepository
-import com.example.moneymanager.data.repository.CategoryRepository
-import com.example.moneymanager.data.repository.FirebaseAuthRepository
-import com.example.moneymanager.data.repository.FirebaseBudgetRepository
-import com.example.moneymanager.data.repository.FirebaseCategoryRepository
-import com.example.moneymanager.data.repository.FirebaseTransactionRepository
-import com.example.moneymanager.data.repository.TransactionRepository
+import pose.moneymanager.data.repository.AuthRepository
+import pose.moneymanager.data.repository.BudgetRepository
+import pose.moneymanager.data.repository.CategoryRepository
+import pose.moneymanager.data.repository.FirebaseAuthRepository
+import pose.moneymanager.data.repository.FirebaseBudgetRepository
+import pose.moneymanager.data.repository.FirebaseCategoryRepository
+import pose.moneymanager.data.repository.FirebaseTransactionRepository
+import pose.moneymanager.data.repository.TransactionRepository
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -39,17 +39,18 @@ object FirebaseModule {
     @Provides
     @Singleton
     fun provideGoogleSignInClient(@ApplicationContext context: Context): GoogleSignInClient {
-        val gso = try {
-            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(context.getString(com.example.moneymanager.R.string.default_web_client_id))
-                .requestEmail()
-                .build()
-        } catch (e: Exception) {
-            // Fallback configuration when google-services.json is not available
-            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build()
+
+        val webClientId = context.getString(pose.moneymanager.R.string.default_web_client_id)
+
+        require(webClientId.isNotBlank()) {
+            "default_web_client_id is missing! Check your google-services.json."
         }
+
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(webClientId)
+            .requestEmail()
+            .build()
+
         return GoogleSignIn.getClient(context, gso)
     }
 

@@ -1,4 +1,4 @@
-package com.example.moneymanager
+package pose.moneymanager
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -9,8 +9,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.example.moneymanager.ui.navigation.MainContainer
-import com.example.moneymanager.ui.theme.MoneyManagerTheme
+import pose.moneymanager.ui.navigation.MainContainer
+import pose.moneymanager.ui.theme.MoneyManagerTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

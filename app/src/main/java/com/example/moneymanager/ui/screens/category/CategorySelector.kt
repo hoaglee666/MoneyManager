@@ -1,4 +1,4 @@
-package com.example.moneymanager.ui.screens.category
+package pose.moneymanager.ui.screens.category
 
 
 import androidx.compose.foundation.BorderStroke
@@ -42,8 +42,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.moneymanager.data.model.Category
-import com.example.moneymanager.ui.viewmodel.CategoryViewModel
+import pose.moneymanager.data.model.Category
+import pose.moneymanager.ui.viewmodel.CategoryViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

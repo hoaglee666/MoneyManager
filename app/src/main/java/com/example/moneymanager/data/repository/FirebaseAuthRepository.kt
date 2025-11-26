@@ -1,8 +1,8 @@
-package com.example.moneymanager.data.repository
+package pose.moneymanager.data.repository
 
 
 import android.util.Log
-import com.example.moneymanager.data.model.User
+import pose.moneymanager.data.model.User
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
-import androidx.core.net.toUri
 
 @Singleton
 class FirebaseAuthRepository @Inject constructor(

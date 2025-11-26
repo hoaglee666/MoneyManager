@@ -1,4 +1,4 @@
-package com.example.moneymanager.ui.theme
+package pose.moneymanager.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

@@ -1,4 +1,4 @@
-package com.example.moneymanager.ui.screens.transaction
+package pose.moneymanager.ui.screens.transaction
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
@@ -25,14 +25,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.moneymanager.data.model.Category
-import com.example.moneymanager.data.model.Transaction
-import com.example.moneymanager.ui.screens.category.CategorySelector
-import com.example.moneymanager.ui.theme.BackgroundGray
-import com.example.moneymanager.ui.theme.MediumGreen
-import com.example.moneymanager.ui.theme.TextGray // Explicit import
-import com.example.moneymanager.ui.viewmodel.CategoryViewModel
-import com.example.moneymanager.ui.viewmodel.TransactionViewModel
+import pose.moneymanager.data.model.Category
+import pose.moneymanager.data.model.Transaction
+import pose.moneymanager.ui.screens.category.CategorySelector
+import pose.moneymanager.ui.theme.BackgroundGray
+import pose.moneymanager.ui.theme.MediumGreen
+import pose.moneymanager.ui.theme.TextGray // Explicit import
+import pose.moneymanager.ui.viewmodel.CategoryViewModel
+import pose.moneymanager.ui.viewmodel.TransactionViewModel
 import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Calendar

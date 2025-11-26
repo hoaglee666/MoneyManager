@@ -1,12 +1,12 @@
-package com.example.moneymanager.ui.viewmodel
+package pose.moneymanager.ui.viewmodel
 
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.moneymanager.data.model.Transaction
-import com.example.moneymanager.data.repository.TransactionRepository
+import pose.moneymanager.data.model.Transaction
+import pose.moneymanager.data.repository.TransactionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

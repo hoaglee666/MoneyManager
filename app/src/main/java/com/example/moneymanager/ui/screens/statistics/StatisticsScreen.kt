@@ -1,4 +1,4 @@
-package com.example.moneymanager.ui.screens.statistics
+package pose.moneymanager.ui.screens.statistics
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
@@ -30,13 +30,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.moneymanager.data.model.Transaction
-import com.example.moneymanager.ui.theme.BackgroundGray
-import com.example.moneymanager.ui.theme.MediumGreen
-import com.example.moneymanager.ui.theme.TextGray
-import com.example.moneymanager.ui.theme.TextPrimary
-import com.example.moneymanager.ui.viewmodel.CategoryViewModel
-import com.example.moneymanager.ui.viewmodel.TransactionViewModel
+import pose.moneymanager.data.model.Transaction
+import pose.moneymanager.ui.theme.BackgroundGray
+import pose.moneymanager.ui.theme.MediumGreen
+import pose.moneymanager.ui.theme.TextGray
+import pose.moneymanager.ui.theme.TextPrimary
+import pose.moneymanager.ui.viewmodel.CategoryViewModel
+import pose.moneymanager.ui.viewmodel.TransactionViewModel
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar

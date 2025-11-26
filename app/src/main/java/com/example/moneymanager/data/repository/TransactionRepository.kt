@@ -1,6 +1,6 @@
-package com.example.moneymanager.data.repository
+package pose.moneymanager.data.repository
 
-import com.example.moneymanager.data.model.Transaction
+import pose.moneymanager.data.model.Transaction
 import kotlinx.coroutines.flow.Flow
 import java.time.YearMonth
 

@@ -1,20 +1,16 @@
-package com.example.moneymanager.data.repository
+package pose.moneymanager.data.repository
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.example.moneymanager.data.model.Transaction
-import com.google.firebase.Timestamp
+import pose.moneymanager.data.model.Transaction
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.toObjects
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import java.time.YearMonth
-import java.util.Calendar
-import java.util.Date
 import javax.inject.Inject
 import javax.inject.Singleton
 

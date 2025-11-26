@@ -1,4 +1,4 @@
-package com.example.moneymanager.data.repository
+package pose.moneymanager.data.repository
 
 import android.content.Context
 import android.content.SharedPreferences

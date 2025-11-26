@@ -1,6 +1,6 @@
-package com.example.moneymanager.data.repository
+package pose.moneymanager.data.repository
 
-import com.example.moneymanager.data.model.Category
+import pose.moneymanager.data.model.Category
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers

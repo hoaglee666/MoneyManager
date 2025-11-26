@@ -1,4 +1,4 @@
-package com.example.moneymanager
+package pose.moneymanager
 
 import org.junit.Test
 

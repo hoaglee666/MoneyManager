@@ -1,4 +1,4 @@
-package com.example.moneymanager.ui.navigation
+package pose.moneymanager.ui.navigation
 
 
 sealed class Screen(val route: String) {

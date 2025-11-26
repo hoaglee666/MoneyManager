@@ -1,4 +1,4 @@
-package com.example.moneymanager.data.model
+package pose.moneymanager.data.model
 
 data class User(
     val id: String = "",

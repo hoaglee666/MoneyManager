@@ -1,4 +1,4 @@
-package com.example.moneymanager.ui.screens.dashboard
+package pose.moneymanager.ui.screens.dashboard
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -25,19 +25,17 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.moneymanager.data.model.Transaction
-import com.example.moneymanager.ui.theme.BackgroundGray
-import com.example.moneymanager.ui.theme.MediumGreen
-import com.example.moneymanager.ui.theme.TextGray
-import com.example.moneymanager.ui.theme.TextPrimary
-import com.example.moneymanager.ui.viewmodel.AuthViewModel
-import com.example.moneymanager.ui.viewmodel.TransactionViewModel
-import com.example.moneymanager.ui.viewmodel.BudgetViewModel
+import pose.moneymanager.data.model.Transaction
+import pose.moneymanager.ui.theme.BackgroundGray
+import pose.moneymanager.ui.theme.MediumGreen
+import pose.moneymanager.ui.theme.TextGray
+import pose.moneymanager.ui.theme.TextPrimary
+import pose.moneymanager.ui.viewmodel.AuthViewModel
+import pose.moneymanager.ui.viewmodel.TransactionViewModel
+import pose.moneymanager.ui.viewmodel.BudgetViewModel
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -86,7 +84,8 @@ fun DashboardScreen(
                     onNavigateToAddTransaction = onNavigateToAddTransaction,
                     onNavigateToTransactions = onNavigateToTransactions,
                     onNavigateToCategories = onNavigateToCategories,
-                    onNavigateToBudgets = onNavigateToBudgets
+                    onNavigateToBudgets = onNavigateToBudgets,
+                    onNavigateToStatistics = onNavigateToStatistics
                 )
             }
 
@@ -162,7 +161,7 @@ fun DashboardScreen(
 
 @Composable
 fun DashboardHeader(
-    user: com.example.moneymanager.data.model.User?,
+    user: pose.moneymanager.data.model.User?,
     transactionsState: TransactionViewModel.TransactionsState,
     onProfileClick: () -> Unit
 ) {
@@ -327,7 +326,8 @@ fun QuickActionsSection(
     onNavigateToAddTransaction: () -> Unit,
     onNavigateToTransactions: () -> Unit,
     onNavigateToCategories: () -> Unit,
-    onNavigateToBudgets: () -> Unit
+    onNavigateToBudgets: () -> Unit,
+    onNavigateToStatistics: () -> Unit
 ) {
     Column(modifier = Modifier.padding(top = 16.dp)) {
         LazyRow(
@@ -338,6 +338,7 @@ fun QuickActionsSection(
             item { QuickActionItem("History", Icons.Default.History, Color(0xFFFFA000), onNavigateToTransactions) }
             item { QuickActionItem("Budgets", Icons.Default.PieChart, Color(0xFF5C6BC0), onNavigateToBudgets) }
             item { QuickActionItem("Category", Icons.Default.Category, Color(0xFFEF5350), onNavigateToCategories) }
+            item { QuickActionItem("Statistics", Icons.Default.BarChart, Color(0xFF42A5F5), onNavigateToStatistics) }
         }
     }
 }

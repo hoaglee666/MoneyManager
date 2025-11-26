@@ -1,6 +1,6 @@
-package com.example.moneymanager.data.repository
+package pose.moneymanager.data.repository
 
-import com.example.moneymanager.data.model.Budget
+import pose.moneymanager.data.model.Budget
 import kotlinx.coroutines.flow.Flow
 import java.util.Date
 
@@ -9,23 +9,15 @@ import java.util.Date
  */
 interface BudgetRepository {
 
-    /**
-     * Retrieves a flow of budgets for a given date.
-     */
+    // Retrieves a flow of budgets for a given date.
     fun getBudgets(date: Date): Flow<List<Budget>>
 
-    /**
-     * Saves a new budget.
-     */
+    //save a new budget
     suspend fun saveBudget(budget: Budget): Result<Unit>
 
-    /**
-     * Updates an existing budget.
-     */
+    //update existing budget
     suspend fun updateBudget(budget: Budget): Result<Unit>
 
-    /**
-     * Deletes a budget by its ID.
-     */
+    //delete budget
     suspend fun deleteBudget(budgetId: String): Result<Unit>
 }

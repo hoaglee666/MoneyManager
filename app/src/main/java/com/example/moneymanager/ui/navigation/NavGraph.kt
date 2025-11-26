@@ -1,9 +1,8 @@
-package com.example.moneymanager.ui.navigation
+package pose.moneymanager.ui.navigation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -14,10 +13,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -42,17 +39,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.moneymanager.ui.screens.auth.AuthScreen
-import com.example.moneymanager.ui.screens.budget.BudgetScreen
-import com.example.moneymanager.ui.screens.category.CategoriesScreen
-import com.example.moneymanager.ui.screens.dashboard.DashboardScreen
-import com.example.moneymanager.ui.screens.profile.ProfileScreen
-import com.example.moneymanager.ui.screens.statistics.StatisticsScreen
-import com.example.moneymanager.ui.screens.transaction.AddEditTransactionScreen
-import com.example.moneymanager.ui.screens.transaction.TransactionsScreen
-import com.example.moneymanager.ui.theme.MediumGreen
-import com.example.moneymanager.ui.theme.TextGray
-import com.example.moneymanager.ui.viewmodel.AuthViewModel
+import pose.moneymanager.ui.screens.auth.AuthScreen
+import pose.moneymanager.ui.screens.budget.BudgetScreen
+import pose.moneymanager.ui.screens.category.CategoriesScreen
+import pose.moneymanager.ui.screens.dashboard.DashboardScreen
+import pose.moneymanager.ui.screens.profile.ProfileScreen
+import pose.moneymanager.ui.screens.statistics.StatisticsScreen
+import pose.moneymanager.ui.screens.transaction.AddEditTransactionScreen
+import pose.moneymanager.ui.screens.transaction.TransactionsScreen
+import pose.moneymanager.ui.theme.MediumGreen
+import pose.moneymanager.ui.theme.TextGray
+import pose.moneymanager.ui.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

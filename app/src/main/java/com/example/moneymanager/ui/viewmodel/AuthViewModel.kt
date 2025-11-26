@@ -1,16 +1,15 @@
-package com.example.moneymanager.ui.viewmodel
+package pose.moneymanager.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.moneymanager.data.model.User
-import com.example.moneymanager.data.repository.AuthRepository
-import com.example.moneymanager.data.repository.SettingsRepository
+import pose.moneymanager.data.model.User
+import pose.moneymanager.data.repository.AuthRepository
+import pose.moneymanager.data.repository.SettingsRepository
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

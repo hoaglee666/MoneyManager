@@ -1,6 +1,7 @@
-package com.example.moneymanager.ui.screens.auth
+package pose.moneymanager.ui.screens.auth
 
 import android.app.Activity
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
@@ -36,8 +37,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.moneymanager.ui.theme.*
-import com.example.moneymanager.ui.viewmodel.AuthViewModel
+import pose.moneymanager.ui.theme.*
+import pose.moneymanager.ui.viewmodel.AuthViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 
@@ -58,14 +59,18 @@ fun AuthScreen(
     val googleSignInLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
         onResult = {
-            if (it.resultCode == Activity.RESULT_OK) {
+            Log.d("GOOGLE_TEST", "onResult called with resultCode=${it.resultCode}, data=${it.data}")
+            if (it.resultCode == Activity.RESULT_OK && it.data != null) {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
                 try {
                     val account = task.getResult(ApiException::class.java)
+                    Log.d("GOOGLE_TEST", "Google idToken = ${account.idToken}")
                     authViewModel.signInWithGoogleAccount(account)
                 } catch (e: ApiException) {
-                    // Handle error
+                    Log.e("GOOGLE_TEST", "Google sign-in error", e)
                 }
+            } else {
+                Log.e("GOOGLE_TEST", "Sign-in failed or canceled")
             }
         }
     )

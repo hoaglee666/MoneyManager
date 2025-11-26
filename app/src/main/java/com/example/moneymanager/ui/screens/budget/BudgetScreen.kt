@@ -1,4 +1,4 @@
-package com.example.moneymanager.ui.screens.budget
+package pose.moneymanager.ui.screens.budget
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -27,14 +27,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.moneymanager.data.model.Budget
-import com.example.moneymanager.data.model.BudgetStatus
-import com.example.moneymanager.ui.theme.BackgroundGray
-import com.example.moneymanager.ui.theme.MediumGreen
-import com.example.moneymanager.ui.theme.TextGray
-import com.example.moneymanager.ui.theme.TextPrimary
-import com.example.moneymanager.ui.viewmodel.BudgetViewModel
-import com.example.moneymanager.ui.viewmodel.BudgetsUiState
+import pose.moneymanager.data.model.Budget
+import pose.moneymanager.data.model.BudgetStatus
+import pose.moneymanager.ui.theme.BackgroundGray
+import pose.moneymanager.ui.theme.MediumGreen
+import pose.moneymanager.ui.theme.TextGray
+import pose.moneymanager.ui.theme.TextPrimary
+import pose.moneymanager.ui.viewmodel.BudgetViewModel
+import pose.moneymanager.ui.viewmodel.BudgetsUiState
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -111,7 +111,12 @@ fun BudgetScreen(
                         // 2. Budget List
                         if (state.budgets.isEmpty()) {
                             item {
-                                EmptyState()
+                                EmptyState(
+                                    showAddEditDialog = {
+                                        selectedBudget = null
+                                        showAddEditDialog = true
+                                    }
+                                )
                             }
                         } else {
                             item {
@@ -426,7 +431,9 @@ private fun BudgetListItem(
 }
 
 @Composable
-private fun EmptyState() {
+private fun EmptyState(
+    showAddEditDialog: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -440,12 +447,14 @@ private fun EmptyState() {
                 .background(BackgroundGray),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = null,
-                tint = TextGray,
-                modifier = Modifier.size(40.dp)
-            )
+            IconButton(onClick = {showAddEditDialog()}) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null,
+                    tint = TextGray,
+                    modifier = Modifier.size(40.dp)
+                )
+            }
         }
         Spacer(modifier = Modifier.height(16.dp))
         Text(

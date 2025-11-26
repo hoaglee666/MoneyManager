@@ -1,5 +1,7 @@
-package pose.moneymanager.ui.navigation
+package com.example.moneymanager.ui.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
@@ -39,6 +41,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import pose.moneymanager.ui.navigation.Screen
 import pose.moneymanager.ui.screens.auth.AuthScreen
 import pose.moneymanager.ui.screens.budget.BudgetScreen
 import pose.moneymanager.ui.screens.category.CategoriesScreen
@@ -51,6 +54,7 @@ import pose.moneymanager.ui.theme.MediumGreen
 import pose.moneymanager.ui.theme.TextGray
 import pose.moneymanager.ui.viewmodel.AuthViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainContainer(
@@ -195,6 +199,7 @@ fun RowScope.NavBarItem(
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavGraph(
     navController: NavHostController,
